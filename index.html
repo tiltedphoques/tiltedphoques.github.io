@@ -97,6 +97,8 @@
         }
 
         function renderServerList(data) {
+            serverList.textContent = '';
+
             data.servers.forEach(server => {
                 console.log(server);
 
