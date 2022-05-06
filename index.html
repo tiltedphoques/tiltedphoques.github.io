@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <style>
         html {
@@ -25,7 +24,6 @@
 </head>
 
 <body>
-
     <div class="container">
         <div class="item">
             <label for="apiKey">Api Key</label>
@@ -34,24 +32,18 @@
         </div>
     </div>
 
-
-
     <script>
-
         function testingAPI() {
             var url = "https://skyrim-reborn-list.skyrim-together.com/admin/list";
             var key = document.getElementById("apiKey").value;
 
             if (key) {
                 console.log("got a key '" + key + "'");
-                console.log("Response xhr: ", httpGet(url, key));
-
                 console.log("Response fetch: ", fetchServerList(url, key));
             } else {
                 alert("Add a key you retard");
             }
         }
-
 
         async function fetchServerList(url, key) {
             const response = await fetch(url, {
@@ -66,23 +58,6 @@
                     console.log(error)
                 });
         }
-
-
-        function httpGet(url, key) {
-            var xhr = new XMLHttpRequest();
-            xhr.open("GET", url, true);
-            xhr.setRequestHeader("x-api-key", key);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    console.log(JSON.parse(''))
-                }
-            };
-            xhr.send(null);
-            return xhr.responseText;
-        }
     </script>
-
-
 </body>
-
 </html>
