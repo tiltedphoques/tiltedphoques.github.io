@@ -236,7 +236,7 @@
         function renderServerBanList(data) {
             serverList.textContent = '';
 
-            data.servers.forEach(server => {
+            data.forEach(server => {
 
                 let tableRow = document.createElement("tr");
                 let serverIp = document.createElement("td");
