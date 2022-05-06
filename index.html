@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <style>
         html {
             background-color: #36393f;
+            color: white;
         }
 
         .container {
@@ -17,9 +19,7 @@
             justify-self: center;
         }
 
-        label {
-            color: white;
-        }
+        #serverList> {}
     </style>
 </head>
 
@@ -28,36 +28,99 @@
         <div class="item">
             <label for="apiKey">Api Key</label>
             <input type="text" id="apiKey" name="apiKey"><br><br>
-            <button type="button" onclick="testingAPI()">Receive Data</button>
+            <button type="button" onclick="getServerList()">Receive Data</button>
+        </div>
+        <div class="item">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>IP</th>
+                        <th>PORT</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="serverListBody">
+                </tbody>
+            </table>
         </div>
     </div>
 
     <script>
-        function testingAPI() {
-            var url = "https://skyrim-reborn-list.skyrim-together.com/admin/list";
-            var key = document.getElementById("apiKey").value;
 
-            if (key) {
-                console.log("got a key '" + key + "'");
-                console.log("Response fetch: ", fetchServerList(url, key));
+        const serverList = document.getElementById("serverListBody");
+        const baseUrl = "https://skyrim-reborn-list.skyrim-together.com/admin/";
+        var apiKey = "";
+
+        function getServerList() {
+            let url = baseUrl + "list";
+            apiKey = document.getElementById("apiKey").value;
+
+            if (apiKey) {
+                console.log("got a key '" + apiKey + "'");
+                console.log("Response fetch: ", fetchServerList(url));
             } else {
                 alert("Add a key you retard");
             }
         }
 
-        async function fetchServerList(url, key) {
+        async function fetchServerList(url) {
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
-                    'x-api-key': key
+                    'x-api-key': apiKey
                 }
             })
-                .then(response => response.json())
-                .then(data => console.log(data))
-                .catch(error => {
-                    console.log(error)
-                });
+            .then(response => response.json())
+            .then(data => renderServerList(data))
+            .catch(error => {
+                console.log(error)
+            });
+        }
+
+        async function banServer(serverIpPort) {
+            let url = baseUrl + "ban/" + serverIpPort;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                mode: 'cors',
+                headers: {
+                    'x-api-key': apiKey
+                }
+            })
+            .then(response => response.json())
+            .then(data => { console.log(data); })
+            .then(data => { return data })
+            .catch(error => {
+                console.log(error)
+            });
+        }
+
+        function renderServerList(data) {
+            data.servers.forEach(server => {
+                console.log(server);
+
+                let tableRow = document.createElement("tr");
+                let serverName = document.createElement("td");
+                serverName.append(server.name);
+                let serverIp = document.createElement("td");
+                serverIp.append(server.ip);
+                let serverPort = document.createElement("td");
+                serverPort.append(server.port);
+
+                let serverBanBtn = document.createElement("button");
+                serverBanBtn.append("Ban");
+                serverBanBtn.setAttribute("onClick", "banServer('" + server.ip + ":" + server.port + "')");
+
+                tableRow.append(serverName);
+                tableRow.append(serverIp);
+                tableRow.append(serverPort);
+                tableRow.append(serverBanBtn);
+
+                serverList.append(tableRow);
+            });
         }
     </script>
 </body>
+
 </html>
