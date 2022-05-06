@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        html {
+            background-color: #36393f;
+        }
+
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            grid-template-rows: min-content 1fr min-content;
+        }
+
+        .item {
+            grid-column-start: 2;
+            justify-self: center;
+        }
+
+        label {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="item">
+            <label for="apiKey">Api Key</label>
+            <input type="text" id="apiKey" name="apiKey"><br><br>
+            <button type="button" onclick="testingAPI()">Receive Data</button>
+        </div>
+    </div>
+
+
+
+    <script>
+
+        function testingAPI() {
+            var url = "https://skyrim-reborn-list.skyrim-together.com/admin/list";
+            var key = document.getElementById("apiKey").value;
+
+            if (key) {
+                console.log("got a key '" + key + "'");
+                console.log("Response xhr: ", httpGet(url, key));
+
+                console.log("Response fetch: ", fetchServerList(url, key));
+            } else {
+                alert("Add a key you retard");
+            }
+        }
+
+
+        async function fetchServerList(url, key) {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    'X-API-Key': key
+                }
+            })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => {
+                    console.log(error)
+                });
+        }
+
+
+        function httpGet(url, key) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", url, true);
+            xhr.setRequestHeader("X-API-Key", key);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    console.log(JSON.parse(''))
+                }
+            };
+            xhr.send(null);
+            return xhr.responseText;
+        }
+    </script>
+
+
+</body>
+
+</html>
