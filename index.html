@@ -19,7 +19,26 @@
             justify-self: center;
         }
 
-        #serverList> {}
+        .item>button {
+            margin: 0 auto;
+            display: block;
+        }
+
+        #serverList, #serverBanList {
+            margin-top: 1rem;
+        }
+
+        td {
+            padding: 0 1rem;
+        }
+        
+        h2 {
+            text-align: center;
+        }
+
+        table {
+            margin: 0 auto;
+        }
     </style>
 </head>
 
@@ -27,20 +46,38 @@
     <div class="container">
         <div class="item">
             <label for="apiKey">Api Key</label>
-            <input type="text" id="apiKey" name="apiKey"><br><br>
-            <button type="button" onclick="getServerList()">Receive Data</button>
+            <input type="password" id="apiKey" name="apiKey"><br><br>
+            <button type="button" onclick="refreshList()">Refresh Serverlist</button>
         </div>
-        <div class="item">
+        <div class="item" id="serverList">
+            <h2>Servers</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>IP</th>
-                        <th>PORT</th>
+                        <th>Ip</th>
+                        <th>Port</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody id="serverListBody">
+                    <tr></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="item" id="serverBanList">
+            <h2>Banned Servers</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Ip</th>
+                        <th>Port</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="serverBanListBody">
+                    <tr></tr>
                 </tbody>
             </table>
         </div>
@@ -50,37 +87,34 @@
 
         const serverList = document.getElementById("serverListBody");
         const baseUrl = "https://skyrim-reborn-list.skyrim-together.com/admin/";
+        var isRefreshing = false;
         var apiKey = "";
 
-        function getServerList() {
-            let url = baseUrl + "list";
+        setInterval(autoRefreshServerList, 1000 * 360);
+
+        function readApiKey() {
             apiKey = document.getElementById("apiKey").value;
 
             if (apiKey) {
                 console.log("got a key '" + apiKey + "'");
-                console.log("Response fetch: ", fetchServerList(url));
             } else {
                 alert("Add a key you retard");
             }
+
+            return apiKey;
         }
 
-        async function fetchServerList(url) {
+        async function getData(url) {
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'x-api-key': apiKey
                 }
-            })
-            .then(response => response.json())
-            .then(data => renderServerList(data))
-            .catch(error => {
-                console.log(error)
             });
+            return response.json();
         }
 
-        async function banServer(serverIpPort) {
-            let url = baseUrl + "ban/" + serverIpPort;
-
+        async function postData(url) {
             const response = await fetch(url, {
                 method: 'POST',
                 mode: 'cors',
@@ -88,19 +122,76 @@
                     'x-api-key': apiKey
                 }
             })
-            .then(response => response.json())
-            .then(data => { console.log(data); })
-            .then(data => { return data })
-            .catch(error => {
-                console.log(error)
-            });
+            return response.json();
+        }
+
+        async function deleteData(url) {
+            const response = await fetch(url, {
+                method: 'DELETE',
+                mode: 'cors',
+                headers: {
+                    'x-api-key': apiKey
+                }
+            })
+            return response.json();
+        }
+
+        function banServer(serverIpPort) {
+            readApiKey();
+
+            let url = baseUrl + "ban/" + serverIpPort;
+
+            postData(url)
+                .then(data => { console.log(data); })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+
+        function unbanServer(serverIpPort) {
+            readApiKey();
+
+            let url = baseUrl + "ban/" + serverIpPort;
+
+            deleteData(url)
+                .then(data => { console.log(data); })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+
+        function refreshList() {
+            readApiKey();
+
+            let url = baseUrl + "list";
+
+            getData(url)
+                .then(data => renderServerList(data))
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+
+        function autoRefreshServerList() {
+            console.log("Trying to auto refresh server");
+
+            if (apiKey) {
+                let url = baseUrl + "list";
+
+                console.log("Auto refreshing server");
+
+                getData(url)
+                    .then(data => renderServerList(data))
+                    .catch(error => {
+                        console.log(error);
+                    });
+            }
         }
 
         function renderServerList(data) {
             serverList.textContent = '';
 
             data.servers.forEach(server => {
-                console.log(server);
 
                 let tableRow = document.createElement("tr");
                 let serverName = document.createElement("td");
@@ -115,6 +206,29 @@
                 serverBanBtn.setAttribute("onClick", "banServer('" + server.ip + ":" + server.port + "')");
 
                 tableRow.append(serverName);
+                tableRow.append(serverIp);
+                tableRow.append(serverPort);
+                tableRow.append(serverBanBtn);
+
+                serverList.append(tableRow);
+            });
+        }
+
+        function renderServerBanList(data) {
+            serverList.textContent = '';
+
+            data.servers.forEach(server => {
+
+                let tableRow = document.createElement("tr");
+                let serverIp = document.createElement("td");
+                serverIp.append(server.ip);
+                let serverPort = document.createElement("td");
+                serverPort.append(server.port);
+
+                let serverUnbanBtn = document.createElement("button");
+                serverUnbanBtn.append("Unban");
+                serverUnbanBtn.setAttribute("onClick", "unbanServer('" + server.ip + ":" + server.port + "')");
+
                 tableRow.append(serverIp);
                 tableRow.append(serverPort);
                 tableRow.append(serverBanBtn);
