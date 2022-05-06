@@ -24,14 +24,15 @@
             display: block;
         }
 
-        #serverList, #serverBanList {
+        #serverList,
+        #serverBanList {
             margin-top: 1rem;
         }
 
         td {
             padding: 0 1rem;
         }
-        
+
         h2 {
             text-align: center;
         }
@@ -47,7 +48,7 @@
         <div class="item">
             <label for="apiKey">Api Key</label>
             <input type="password" id="apiKey" name="apiKey"><br><br>
-            <button type="button" onclick="refreshList()">Refresh Serverlist</button>
+            <button type="button" onclick="refreshLists()">Refresh Serverlist</button>
         </div>
         <div class="item" id="serverList">
             <h2>Servers</h2>
@@ -90,7 +91,7 @@
         var isRefreshing = false;
         var apiKey = "";
 
-        setInterval(autoRefreshServerList, 1000 * 360);
+        setInterval(autoRefreshServerLists, 1000 * 360);
 
         function readApiKey() {
             apiKey = document.getElementById("apiKey").value;
@@ -146,6 +147,8 @@
                 .catch(error => {
                     console.log(error);
                 });
+
+            refreshLists();
         }
 
         function unbanServer(serverIpPort) {
@@ -158,30 +161,46 @@
                 .catch(error => {
                     console.log(error);
                 });
+
+            refreshLists();
         }
 
-        function refreshList() {
+        function refreshLists() {
             readApiKey();
 
-            let url = baseUrl + "list";
+            let urlServer = baseUrl + "list";
+            let urlBanServer = baseUrl + "ban";
 
-            getData(url)
+            getData(urlServer)
                 .then(data => renderServerList(data))
+                .catch(error => {
+                    console.log(error);
+                });
+
+            getData(urlBanServer)
+                .then(data => renderServerBanList(data))
                 .catch(error => {
                     console.log(error);
                 });
         }
 
-        function autoRefreshServerList() {
-            console.log("Trying to auto refresh server");
+        function autoRefreshServerLists() {
+            console.log("Trying to auto refresh server lists");
 
             if (apiKey) {
                 let url = baseUrl + "list";
+                let urlBanServer = baseUrl + "ban";
 
-                console.log("Auto refreshing server");
+                console.log("Auto refreshing server lists");
 
                 getData(url)
                     .then(data => renderServerList(data))
+                    .catch(error => {
+                        console.log(error);
+                    });
+
+                getData(urlBanServer)
+                    .then(data => renderServerBanList(data))
                     .catch(error => {
                         console.log(error);
                     });
