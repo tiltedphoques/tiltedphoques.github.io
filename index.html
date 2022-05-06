@@ -57,7 +57,7 @@
             const response = await fetch(url, {
                 method: 'GET',
                 headers: {
-                    'X-API-Key': key
+                    'x-api-key': key
                 }
             })
                 .then(response => response.json())
@@ -71,7 +71,7 @@
         function httpGet(url, key) {
             var xhr = new XMLHttpRequest();
             xhr.open("GET", url, true);
-            xhr.setRequestHeader("X-API-Key", key);
+            xhr.setRequestHeader("x-api-key", key);
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     console.log(JSON.parse(''))
