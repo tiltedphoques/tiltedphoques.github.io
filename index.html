@@ -20,11 +20,6 @@
             justify-self: center;
         }
 
-        .item > button {
-            margin: 0 auto;
-            display: block;
-        }
-
         #serverList,
         #serverBanList {
             margin-top: 1rem;
@@ -54,7 +49,7 @@
     <div class="container">
         <div class="item">
             <label for="apiKey">Api Key</label>
-            <input type="password" id="apiKey" name="apiKey"><br><br>
+            <input type="password" id="apiKey" name="apiKey">
             <button type="button" onclick="refreshLists()">Refresh Serverlist</button>
         </div>
         <div class="item" id="serverList">
