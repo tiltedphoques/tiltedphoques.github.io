@@ -62,7 +62,6 @@
                     </tr>
                 </thead>
                 <tbody id="serverListBody">
-                    <tr></tr>
                 </tbody>
             </table>
         </div>
@@ -78,7 +77,6 @@
                     </tr>
                 </thead>
                 <tbody id="serverBanListBody">
-                    <tr></tr>
                 </tbody>
             </table>
         </div>
@@ -86,7 +84,8 @@
 
     <script>
 
-        const serverList = document.getElementById("serverListBody");
+        const serverListBody = document.getElementById("serverListBody");
+        const serverBanListBody = document.getElementById("serverBanListBody");
         const baseUrl = "https://skyrim-reborn-list.skyrim-together.com/admin/";
         var isRefreshing = false;
         var apiKey = "";
@@ -171,6 +170,9 @@
             let urlServer = baseUrl + "list";
             let urlBanServer = baseUrl + "ban";
 
+            serverListBody.textContent = '';
+            serverBanListBody.textContent = '';
+
             getData(urlServer)
                 .then(data => renderServerList(data))
                 .catch(error => {
@@ -191,6 +193,9 @@
                 let url = baseUrl + "list";
                 let urlBanServer = baseUrl + "ban";
 
+                serverListBody.textContent = '';
+                serverBanListBody.textContent = '';
+
                 console.log("Auto refreshing server lists");
 
                 getData(url)
@@ -208,8 +213,6 @@
         }
 
         function renderServerList(data) {
-            serverList.textContent = '';
-
             data.servers.forEach(server => {
 
                 let tableRow = document.createElement("tr");
@@ -229,13 +232,11 @@
                 tableRow.append(serverPort);
                 tableRow.append(serverBanBtn);
 
-                serverList.append(tableRow);
+                serverListBody.append(tableRow);
             });
         }
 
         function renderServerBanList(data) {
-            serverList.textContent = '';
-
             data.forEach(server => {
 
                 let arr = server.key.split(":");
@@ -256,7 +257,7 @@
                 tableRow.append(serverPort);
                 tableRow.append(serverUnbanBtn);
 
-                serverList.append(tableRow);
+                serverBanListBody.append(tableRow);
             });
         }
     </script>
