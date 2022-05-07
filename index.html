@@ -141,6 +141,7 @@
         }
 
         function handleErrors(response) {
+            console.log(response);
             if (!response.ok) {
                 return Promise.reject(response);
             }
