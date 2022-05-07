@@ -140,6 +140,13 @@
             return response.json();
         }
 
+        function handleErrors(response) {
+            if (!response.ok) {
+                throw Error(response.statusText);
+            }
+            return response;
+        }
+
         function banServer(serverIpPort, name) {
             readApiKey();
 
@@ -149,6 +156,7 @@
             });
 
             postData(banUrl, body)
+                .then(handleErrors)
                 .then(data => { console.log(data); })
                 .catch(error => {
                     console.log(error);
@@ -164,6 +172,7 @@
             });
 
             deleteData(banUrl, body)
+                .then(handleErrors)
                 .then(data => { console.log(data); })
                 .catch(error => {
                     console.log(error);
@@ -176,12 +185,14 @@
             clearServerLists();
 
             getData(listUrl)
+                .then(handleErrors)
                 .then(data => renderServerList(data))
                 .catch(error => {
                     console.log(error);
                 });
 
             getData(banUrl)
+                .then(handleErrors)
                 .then(data => renderServerBanList(data))
                 .catch(error => {
                     console.log(error);
@@ -190,23 +201,9 @@
 
         function autoRefreshServerLists() {
             console.log("Trying to auto refresh server lists");
-
             if (apiKey) {
-                clearServerLists();
-
                 console.log("Auto refreshing server lists");
-
-                getData(listUrl)
-                    .then(data => renderServerList(data))
-                    .catch(error => {
-                        console.log(error);
-                    });
-
-                getData(banUrl)
-                    .then(data => renderServerBanList(data))
-                    .catch(error => {
-                        console.log(error);
-                    });
+                refreshLists();
             }
         }
 
