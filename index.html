@@ -150,10 +150,10 @@
 
             postData(banUrl, body)
                 .then(data => { console.log(data); })
-                .then(refreshLists())
                 .catch(error => {
                     console.log(error);
                 });
+            setTimeout(() => { refreshLists(); }, 1000);
         }
 
         function unbanServer(serverIpPort) {
@@ -165,10 +165,10 @@
 
             deleteData(banUrl, body)
                 .then(data => { console.log(data); })
-                .then(refreshLists())
                 .catch(error => {
                     console.log(error);
                 });
+            setTimeout(() => { refreshLists(); }, 1000);
         }
 
         function refreshLists() {
@@ -228,7 +228,7 @@
 
                 let serverBanBtn = document.createElement("button");
                 serverBanBtn.append("Ban");
-                serverBanBtn.setAttribute("onClick", "banServer('" + server.ip + ":" + server.port + "')");
+                serverBanBtn.setAttribute("onClick", "banServer('" + server.ip + ":" + server.port + "', '" + server.name + "')");
 
                 tableRow.append(serverName);
                 tableRow.append(serverIp);
