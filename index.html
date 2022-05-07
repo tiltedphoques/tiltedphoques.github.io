@@ -113,6 +113,7 @@
                     'x-api-key': apiKey
                 }
             });
+            .then(handleErrors);
             return response.json();
         }
 
@@ -125,6 +126,7 @@
                 },
                 body: body
             })
+            .then(handleErrors);
             return response.json();
         }
 
@@ -137,6 +139,7 @@
                 },
                 body: body
             })
+            .then(handleErrors);
             return response.json();
         }
 
@@ -156,7 +159,6 @@
             });
 
             postData(banUrl, body)
-                .then(handleErrors)
                 .then(data => { console.log(data); })
                 .catch(error => {
                     console.log(error);
@@ -172,7 +174,6 @@
             });
 
             deleteData(banUrl, body)
-                .then(handleErrors)
                 .then(data => { console.log(data); })
                 .catch(error => {
                     console.log(error);
@@ -185,14 +186,12 @@
             clearServerLists();
 
             getData(listUrl)
-                .then(handleErrors)
                 .then(data => renderServerList(data))
                 .catch(error => {
                     console.log(error);
                 });
 
             getData(banUrl)
-                .then(handleErrors)
                 .then(data => renderServerBanList(data))
                 .catch(error => {
                     console.log(error);
