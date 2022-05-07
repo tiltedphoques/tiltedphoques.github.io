@@ -71,6 +71,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th>Name</th>
                         <th>Ip</th>
                         <th>Port</th>
                         <th></th>
@@ -86,7 +87,8 @@
 
         const serverListBody = document.getElementById("serverListBody");
         const serverBanListBody = document.getElementById("serverBanListBody");
-        const baseUrl = "https://skyrim-reborn-list.skyrim-together.com/admin/";
+        const listUrl = "https://skyrim-reborn-list.skyrim-together.com/admin/list";
+        const banUrl = "https://skyrim-reborn-list.skyrim-together.com/admin/ban";
         var isRefreshing = false;
         var apiKey = "";
 
@@ -98,7 +100,7 @@
             if (apiKey) {
                 console.log("got a key '" + apiKey + "'");
             } else {
-                alert("Add a key you retard");
+                alert("You shall not pass");
             }
 
             return apiKey;
@@ -114,34 +116,39 @@
             return response.json();
         }
 
-        async function postData(url) {
+        async function postData(url, body) {
             const response = await fetch(url, {
                 method: 'POST',
                 mode: 'cors',
                 headers: {
                     'x-api-key': apiKey
-                }
+                },
+                body: body
             })
             return response.json();
         }
 
-        async function deleteData(url) {
+        async function deleteData(url, body) {
             const response = await fetch(url, {
                 method: 'DELETE',
                 mode: 'cors',
                 headers: {
                     'x-api-key': apiKey
-                }
+                },
+                body: body
             })
             return response.json();
         }
 
-        function banServer(serverIpPort) {
+        function banServer(serverIpPort, name) {
             readApiKey();
 
-            let url = baseUrl + "ban/" + serverIpPort;
+            let body = new URLSearchParams({
+                'key': serverIpPort,
+                'name': name
+            });
 
-            postData(url)
+            postData(banUrl, body)
                 .then(data => { console.log(data); })
                 .then(refreshLists())
                 .catch(error => {
@@ -152,9 +159,11 @@
         function unbanServer(serverIpPort) {
             readApiKey();
 
-            let url = baseUrl + "ban/" + serverIpPort;
+            let body = new URLSearchParams({
+                'key': serverIpPort
+            });
 
-            deleteData(url)
+            deleteData(banUrl, body)
                 .then(data => { console.log(data); })
                 .then(refreshLists())
                 .catch(error => {
@@ -164,20 +173,15 @@
 
         function refreshLists() {
             readApiKey();
+            clearServerLists();
 
-            let urlServer = baseUrl + "list";
-            let urlBanServer = baseUrl + "ban";
-
-            serverListBody.textContent = '';
-            serverBanListBody.textContent = '';
-
-            getData(urlServer)
+            getData(listUrl)
                 .then(data => renderServerList(data))
                 .catch(error => {
                     console.log(error);
                 });
 
-            getData(urlBanServer)
+            getData(banUrl)
                 .then(data => renderServerBanList(data))
                 .catch(error => {
                     console.log(error);
@@ -188,26 +192,27 @@
             console.log("Trying to auto refresh server lists");
 
             if (apiKey) {
-                let url = baseUrl + "list";
-                let urlBanServer = baseUrl + "ban";
-
-                serverListBody.textContent = '';
-                serverBanListBody.textContent = '';
+                clearServerLists();
 
                 console.log("Auto refreshing server lists");
 
-                getData(url)
+                getData(listUrl)
                     .then(data => renderServerList(data))
                     .catch(error => {
                         console.log(error);
                     });
 
-                getData(urlBanServer)
+                getData(banUrl)
                     .then(data => renderServerBanList(data))
                     .catch(error => {
                         console.log(error);
                     });
             }
+        }
+
+        function clearServerLists() {
+            serverListBody.textContent = '';
+            serverBanListBody.textContent = '';
         }
 
         function renderServerList(data) {
@@ -242,6 +247,8 @@
                 let ip = arr.join(":");
 
                 let tableRow = document.createElement("tr");
+                let serverName = document.createElement("td");
+                serverName.append(server.name);
                 let serverIp = document.createElement("td");
                 serverIp.append(ip);
                 let serverPort = document.createElement("td");
@@ -251,6 +258,7 @@
                 serverUnbanBtn.append("Unban");
                 serverUnbanBtn.setAttribute("onClick", "unbanServer('" + server.key + "')");
 
+                tableRow.append(serverName);
                 tableRow.append(serverIp);
                 tableRow.append(serverPort);
                 tableRow.append(serverUnbanBtn);
