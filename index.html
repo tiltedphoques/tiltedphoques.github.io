@@ -113,7 +113,7 @@
                     'x-api-key': apiKey
                 }
             })
-            .then(res => { return handleErrors() });
+            .then(res => { return handleErrors(res) });
         }
 
         async function postData(url, body) {
@@ -125,7 +125,7 @@
                 },
                 body: body
             })
-            .then(res => { return handleErrors() });
+            .then(res => { return handleErrors(res) });
         }
 
         async function deleteData(url, body) {
@@ -137,7 +137,7 @@
                 },
                 body: body
             })
-            .then(res => { return handleErrors() });
+            .then(res => { return handleErrors(res) });
         }
 
         function handleErrors(response) {
