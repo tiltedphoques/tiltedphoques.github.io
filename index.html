@@ -238,15 +238,19 @@
 
             data.forEach(server => {
 
+                let arr = server.key.split(":");
+                let port = arr.pop();
+                let ip = arr.join(":");
+
                 let tableRow = document.createElement("tr");
                 let serverIp = document.createElement("td");
-                serverIp.append(server.ip);
+                serverIp.append(ip);
                 let serverPort = document.createElement("td");
-                serverPort.append(server.port);
+                serverPort.append(port);
 
                 let serverUnbanBtn = document.createElement("button");
                 serverUnbanBtn.append("Unban");
-                serverUnbanBtn.setAttribute("onClick", "unbanServer('" + server.ip + ":" + server.port + "')");
+                serverUnbanBtn.setAttribute("onClick", "unbanServer('" + server.key + "')");
 
                 tableRow.append(serverIp);
                 tableRow.append(serverPort);
