@@ -228,7 +228,7 @@
 
                 let serverBanBtn = document.createElement("button");
                 serverBanBtn.append("Ban");
-                serverBanBtn.setAttribute("onClick", "banServer('" + server.ip + ":" + server.port + "', '" + server.name + "')");
+                serverBanBtn.setAttribute("onClick", "banServer('" + server.ip + ":" + server.port + "', '" + escape(server.name) + "')");
 
                 tableRow.append(serverName);
                 tableRow.append(serverIp);
