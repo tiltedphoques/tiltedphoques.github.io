@@ -101,10 +101,8 @@
         function readApiKey() {
             apiKey = document.getElementById("apiKey").value;
 
-            if (apiKey) {
-                console.log("got a key '" + apiKey + "'");
-            } else {
-                alert("You shall not pass");
+            if (!apiKey) {
+              alert("You shall not pass");
             }
 
             return apiKey;
@@ -148,7 +146,6 @@
         }
 
         function handleErrors(response) {
-            console.log(response);
             if (!response.ok) {
                 return Promise.reject(response);
             }
@@ -165,7 +162,6 @@
 
             postData(banUrl, body)
                 .then(res => res.json())
-                .then(data => { console.log(data); })
                 .catch(error => {
                     console.log(error);
                 });
@@ -181,7 +177,6 @@
 
             deleteData(banUrl, body)
                 .then(res => res.json())
-                .then(data => { console.log(data); })
                 .catch(error => {
                     console.log(error);
                 });
