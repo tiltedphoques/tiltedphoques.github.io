@@ -248,7 +248,7 @@
 
                 let tableRow = document.createElement("tr");
                 let serverName = document.createElement("td");
-                serverName.append(server.name);
+                serverName.append(unescape(server.name));
                 let serverIp = document.createElement("td");
                 serverIp.append(ip);
                 let serverPort = document.createElement("td");
