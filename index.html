@@ -233,6 +233,10 @@
                 let serverBanBtn = document.createElement("button");
                 serverBanBtn.append("Ban");
                 serverBanBtn.setAttribute("onClick", "banServer('" + server.ip + ":" + server.port + "', '" + escape(server.name) + "')");
+                
+                let serverBanIpBtn = document.createElement("button");
+                serverBanIpBtn.append("Ban IP");
+                serverBanIpBtn.setAttribute("onClick", "banServer('" + server.ip + "', '" + escape(server.name) + "')");
 
                 tableRow.append(serverName);
                 tableRow.append(serverIp);
@@ -240,6 +244,7 @@
                 tableRow.append(serverPlayers);
                 tableRow.append(serverVersion);
                 tableRow.append(serverBanBtn);
+                tableRow.append(serverBanIpBtn);
 
                 serverListBody.append(tableRow);
             });
@@ -249,16 +254,12 @@
             data.forEach(server => {
 
                 let arr = server.key.split(":");
-                let port = arr.pop();
-                let ip = arr.join(":");
 
                 let tableRow = document.createElement("tr");
                 let serverName = document.createElement("td");
                 serverName.append(unescape(server.name));
                 let serverIp = document.createElement("td");
-                serverIp.append(ip);
-                let serverPort = document.createElement("td");
-                serverPort.append(port);
+                serverIp.append(server.key);
 
                 let serverUnbanBtn = document.createElement("button");
                 serverUnbanBtn.append("Unban");
@@ -266,7 +267,6 @@
 
                 tableRow.append(serverName);
                 tableRow.append(serverIp);
-                tableRow.append(serverPort);
                 tableRow.append(serverUnbanBtn);
 
                 serverBanListBody.append(tableRow);
